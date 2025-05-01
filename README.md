@@ -1,4 +1,4 @@
-# URL Shortener Application
+# ShortLink
 
 This is a full-stack URL shortener application built using React, TypeScript, Node.js, Express, and MongoDB. The backend is containerized using Docker. The application allows users to shorten URLs and access analytics on their usage.
 
