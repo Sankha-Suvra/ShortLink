@@ -2,36 +2,39 @@ import * as React from "react";
 import { UrlData } from "../interface/UrlData";
 import { Link } from "react-router-dom";
 import { serverUrl } from "../helpers/Constants";
+import { Copy, Trash2 } from "lucide-react";
 import axios from "axios";
+import Button from "./Button";
+import toast from 'react-hot-toast';
 
 interface IDataTableProps {
   data: UrlData[];
-  updateReloadState: ()=> void;
+  updateReloadState: () => void;
 }
 
 const DataTable: React.FunctionComponent<IDataTableProps> = (props) => {
-  const { data, updateReloadState} = props;
+  const { data, updateReloadState } = props;
   // console.log("data in data table is", data);
 
   const renderTableData = () => {
-
-    // if (!Array.isArray(data)) {
-    //   console.error("Data is not an array", data);
-    //   return null;
-    // }
-
     return data.map((item) => {
       return (
         <tr
           key={item._id}
-          className="border-b text-white bg-gray-600 hover:bg-white hover:text-gray-800"
+          className="transition-colors hover:bg-white/5 border-b border-slate-700 last:border-b-0"
         >
-          <td className="px-6 py-3 break-words">
-            <Link to={item.fullUrl} target="_blank" rel="noreferrer noopener">
+          <td className="text-slate-300 truncate overflow-hidden px-4 py-3">
+            <Link
+              to={item.fullUrl}
+              target="_blank"
+              rel="noreferrer noopener"
+              className="hover:text-blue-400 block whitespace-nowrap"
+              title={item.fullUrl}
+            >
               {item.fullUrl}
             </Link>
           </td>
-          <td className="px-6 py-3 break-words">
+          <td className="text-blue-400 px-4 py-3 whitespace-nowrap">
             <Link
               to={`${serverUrl}/shortUrl/${item.shortUrl}`}
               target="_blank"
@@ -40,42 +43,28 @@ const DataTable: React.FunctionComponent<IDataTableProps> = (props) => {
               {item.shortUrl}
             </Link>
           </td>
-          <td className="px-6 py-3 ">{item.clicks}</td>
-          <td className="px-6 py-3 ">
-           <div className="flex content-center">
-              <div className="cursor-pointer px-2" onClick={()=>copyToClipboard(item.shortUrl)}>
-                <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="w-6 h-6 fill-white-500"
-                >
-                <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M8.25 7.5V6.108c0-1.135.845-2.098 1.976-2.192.373-.03.748-.057 1.123-.08M15.75 18H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08M15.75 18.75v-1.875a3.375 3.375 0 0 0-3.375-3.375h-1.5a1.125 1.125 0 0 1-1.125-1.125v-1.5A3.375 3.375 0 0 0 6.375 7.5H5.25m11.9-3.664A2.251 2.251 0 0 0 15 2.25h-1.5a2.251 2.251 0 0 0-2.15 1.586m5.8 0c.065.21.1.433.1.664v.75h-6V4.5c0-.231.035-.454.1-.664M6.75 7.5H4.875c-.621 0-1.125.504-1.125 1.125v12c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V16.5a9 9 0 0 0-9-9Z"
-                />
-                </svg>
-              </div>
+          <td className="text-slate-300 text-center px-4 py-3">
+            {item.clicks}
+          </td>
+          <td className="text-right px-4 py-3 whitespace-nowrap">
+            <div className="flex justify-end items-center gap-2">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => copyToClipboard(item.shortUrl)}
+                className="text-slate-300 hover:text-white hover:bg-white/10 p-1.5 rounded"
+              >
+                <Copy className="h-4 w-4" />
+              </Button>
 
-              <div className="cursor-pointer px-2" onClick={()=>deleteUrl(item._id)}>
-                <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="w-6 h-6 fill-red-500"
-                >
-                <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
-                />
-                </svg>
-              </div>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => deleteUrl(item._id)}
+                className="text-slate-300 hover:text-red-400 hover:bg-white/10 p-1.5 rounded"
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
             </div>
           </td>
         </tr>
@@ -83,41 +72,58 @@ const DataTable: React.FunctionComponent<IDataTableProps> = (props) => {
     });
   };
 
-  const copyToClipboard = async (url: string) =>{
+  const copyToClipboard = async (urlToCopy: string) => {
     try {
-      await navigator.clipboard.writeText(`${serverUrl}/shortUrl/${url}`)
-      alert(`URL copied: ${serverUrl}/shortUrl/${url}`)
+      await navigator.clipboard.writeText(`${serverUrl}/shortUrl/${urlToCopy}`);
+      toast.success("URL Copied Successfully")
     } catch (error) {
-      console.error(error)
+      toast.error("Something went wrong")
+      console.error("Error copying to clipboard:", error);
+      
     }
-  }
+  };
 
-  const deleteUrl = async(id: string) =>{
-    const response = await axios.delete(`${serverUrl}/shortUrl/${id}`)
+  const deleteUrl = async (id: string) => {
+    const response = await axios.delete(`${serverUrl}/shortUrl/${id}`);
+    toast.success("URL Deleted Successfully")
     console.log(response);
-    updateReloadState()
-  }
+    updateReloadState();
+  };
+  //table - rounded-lg border border-slate-700 overflow-hidden bg-white/5
+  //table head - className="text-md uppercase text-gray-50 bg-gray-700"
   return (
-    <div className="relative mx-auto pt-2 pb-10">
-      <div className="relative overflow-x-auto shadow-sm sm:rounded-lg">
-        <table className="w-full table-fixed text-sm text-left rtl:text-right text-gray-50">
-          <thead className="text-md uppercase text-gray-50 bg-gray-700">
+    <div className="container mx-auto px-4 pb-10">
+      <div className="rounded-lg border border-slate-700 bg-slate-800/30 overflow-hidden overflow-x-auto">
+        <table className="min-w-full w-full table-fixed border-collapse">
+          <thead className="bg-slate-700/50">
             <tr>
-              <th scope="col" className="px-6 py-3 w-6/12">
-                FullUrl
+              <th
+                scope="col"
+                className="w-5/12 px-4 py-3 text-left text-xs font-medium text-slate-300 uppercase tracking-wider"
+              >
+                Full Url
               </th>
-              <th scope="col" className="px-6 py-3 w-3/12">
-                ShortUrl
+              <th
+                scope="col"
+                className="w-3/12 px-4 py-3 text-left text-xs font-medium text-slate-300 uppercase tracking-wider"
+              >
+                Short Url
               </th>
-              <th scope="col" className="px-6 py-3 ">
+              <th
+                scope="col"
+                className="w-1/12 px-4 py-3 text-center text-xs font-medium text-slate-300 uppercase tracking-wider"
+              >
                 Clicks
               </th>
-              <th scope="col" className="px-6 py-3 ">
+              <th
+                scope="col"
+                className="w-3/12 px-4 py-3 text-right text-xs font-medium text-slate-300 uppercase tracking-wider"
+              >
                 Action
               </th>
             </tr>
           </thead>
-          <tbody>{renderTableData()}</tbody>
+          <tbody className="divide-y divide-slate-700">{renderTableData()}</tbody>
         </table>
       </div>
     </div>
