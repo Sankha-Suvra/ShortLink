@@ -11,7 +11,7 @@ const app = express()
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
 app.use(cors({
-    origin: "http://localhost:5173", //https://hilarious-pie-38e44f.netlify.app
+    origin: "https://hilarious-pie-38e44f.netlify.app", //https://hilarious-pie-38e44f.netlify.app
     credentials: true,
 }))
 
